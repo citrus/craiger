@@ -19,7 +19,6 @@ OptionParser.new do |opts|
   
 end.parse!
 
-p options
 
 if options[:discover]
   Craiger::Locations.discover!
