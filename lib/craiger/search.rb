@@ -59,6 +59,7 @@ module Craiger
     end
   
     def display
+      
       puts "\n\n"
       puts "RESULTS:"
       results.flatten.each do |result|
