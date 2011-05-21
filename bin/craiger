@@ -2,4 +2,27 @@
 
 $:.unshift File.expand_path("../../lib", __FILE__)
 require 'craiger'
-Craiger::Search.new(ARGV.join(" ")).run!
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  
+  opts.banner = "Usage: craiger [options]"
+
+  opts.on("--discover", "Discover cities") do |b|
+    options[:discover] = b
+  end
+  
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |b|
+    options[:verbose] = b
+  end
+  
+end.parse!
+
+p options
+
+if options[:discover]
+  Craiger::Locations.discover!
+else
+  Craiger::Search.new(ARGV.join(" ")).run!
+end

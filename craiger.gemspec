@@ -19,10 +19,11 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   
-  
   s.add_dependency "eventmachine",    ">= 0.12.10"
   s.add_dependency "em-http-request", ">= 1.0.0.beta.3"
   s.add_dependency "nokogiri",        ">= 1.4.4"
   s.add_dependency "pony",            ">= 1.2"
+  s.add_dependency "sequel",          ">= 3.23.0"
+  s.add_dependency "sqlite3",         ">= 1.3.3"  
   
 end
