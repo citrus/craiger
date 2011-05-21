@@ -6,6 +6,19 @@ Craiger is just something I'm playing with... A multi-city craigslist search wit
 This project was created 2011/5/20... don't expect much yet.
 
 
+Usage
+-----
+
+Craiger is run from the command line... like so:
+
+    cd path/to/where/you/cloned/this/craiger
+    ./bin/craiger [query]
+
+
+This is where some OptionParser magic will come into play...
+
+
+
 Things I'd like to do
 ---------------------
 
