@@ -16,52 +16,43 @@ module Craiger
     def run!
       puts "Searching for #{@query}!"
       
-      @cities = Locations.all
-      @count = 0
-      @total = @cities.length
+      @cities = Locations.all #.shuffle.take(10)
       
-      EM.run {
-        multi = EM::MultiRequest.new
+      count = 0
+      per_group = 7
+      total  = @cities.length
+        
+        
+      until @cities.empty? do
       
-        @cities.each do |city|
-          multi.add EM::HttpRequest.new("http://#{city}.craigslist.org/search/cta").get(:query => @query)
-        end
-  
-        #multi.add(EM::HttpRequest.new('http://www.yahoo.com/').get)
-      
-        multi.callback  {
-          @parser = Parser.new multi.responses[:succeeded].map(&:response)
-          multi.responses[:failed].each do |response|
-            puts "response to #{response.location} failed"
+        EM.run {
+        
+          multi = EM::MultiRequest.new
+          
+          @cities.slice!(0, per_group).each do |city|
+            print "-"
+            url = "http://#{city}.craigslist.org/search/cta"
+            multi.add EM::HttpRequest.new(url).get(:query => @query)
           end
-      
-          EM.stop
+          
+          multi.callback {
+            puts "+"            
+            multi.responses[:failed].each do |response|
+              puts "\n" * 4
+              puts "response to #{response} failed"
+              pp response
+              puts "\n" * 4
+            end
+            @parser = Parser.new multi.responses[:succeeded].map(&:response)
+            
+            results << @parser.results
+            
+            EM.stop            
+          }
         }
-      }
-      
-      
-      
-      
-      
-      
-      
-      #EM.run {
-      #  
-      #  cities = Locations.all
-      #  count = 0
-      #  total = cities.length
-      #  cities.each do |city|
-      #    print 'o'
-      #    http = EM::HttpRequest.new("http://#{city}.craigslist.org/search/cta").get :query => { 'query' => @query, 'minAsk' => 10000, 'maxAsk' => 25000 }
-      #    http.errback { p 'Uh oh'; EM.stop }
-      #    http.callback {
-      #      print '*'
-      #      parse http.response
-      #      EM.stop if (count += 1) == total
-      #    }
-      #  end
-      #}
-      
+        trap("INT") { EM.stop }
+      end
+       
       display
       #email
                   
@@ -70,7 +61,7 @@ module Craiger
     def display
       puts "\n\n"
       puts "RESULTS:"
-      @parser.results.flatten.each do |result|
+      results.flatten.each do |result|
         puts "-" * 88
         puts result
       end

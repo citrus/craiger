@@ -4,6 +4,7 @@ require 'nokogiri'
 require 'sqlite3'
 require 'sequel'
 require 'pony'
+require 'pp'
 
 require 'craiger/locations'
 require 'craiger/search'
@@ -14,5 +15,5 @@ EMAIL_TO = "spencer@citrusme.com"
 DB = Sequel.sqlite('db/craiger.db')
 
 module Craiger
-  
+  # hello!
 end

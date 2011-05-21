@@ -17,10 +17,8 @@ module Craiger
     private
     
       def parse!
-        puts "PARSEING! #{@html}"
         @data = [@data] if @data.is_a? String
         raise ArgumentError unless @data.respond_to?(:map)
-        #@results = @data.map{|i| parse_part i }        
         @data.each do |html|
           doc = Nokogiri::HTML(html)
           rows = doc.css('p.row').select{ |i| i.text =~ /#{day}/ }
@@ -29,11 +27,6 @@ module Craiger
         @results.flatten!
       end      
       
-      #def parse_part(html)
-      #  puts "PARSE PART #{html}"
-        
-      #end
-  
   end
 
 end
