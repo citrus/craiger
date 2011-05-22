@@ -1,6 +1,3 @@
-#require 'eventmachine'
-#require 'em-http'
-
 require 'curb'
 
 module Craiger

@@ -27,20 +27,14 @@ module Craiger
       
       pbar = ProgressBar.new("Searching...", @cities.length)
       Request.new(@cities).send("/search/cta", @query) do |html|
-      
-        puts html
-      
         @parser = Parser.new html
         @results += @parser.results
-        
-        puts @parser.results
-        
         pbar.inc
       end
       pbar.finish
       
       display
-      #email
+      email
                   
     end
   
