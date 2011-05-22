@@ -4,8 +4,17 @@ module Craiger
     
     attr_reader :query, :results
     
+    # A hash of deafult search options
+    def defaults
+      {
+        :subsection => "cta",
+        :srchType => "A"
+      }
+    end
+    
+    
     def initialize(query, options={})
-      @query = options
+      @query = defaults.merge(options)
       @query[:query] = query.to_s.strip.gsub(/\s+/, " + ")
     end
     
@@ -13,48 +22,22 @@ module Craiger
     def run!
       puts "Searching for #{@query}!"
       @results = []
-      @cities = Locations.all #.shuffle.take(10)
+      @cities = Locations.all.shuffle.take(20)
       
-      count = 0
-      per_group = 25
-      total  = @cities.length
       
-              
-      until @cities.empty? do
+      pbar = ProgressBar.new("Searching...", @cities.length)
+      Request.new(@cities).send("/search/cta", @query) do |html|
       
-        EM.run {
+        puts html
+      
+        @parser = Parser.new html
+        @results += @parser.results
         
-          multi = EM::MultiRequest.new
-          
-          @cities.slice!(0, per_group).each do |city|
-            print "-"
-            url = "http://#{city}.craigslist.org/search/cta"
-            multi.add EM::HttpRequest.new(url).get(:query => @query)
-          end
-          
-          multi.callback {
-            
-            multi.responses[:failed].each do |response|
-              puts "\n" * 4
-              puts "response to #{response} failed"
-              pp response
-              puts "\n" * 4
-            end
-            
-            @parser = Parser.new multi.responses[:succeeded].map(&:response)
-            @results += @parser.results
-            
-            print "+ "
-            print @parser.results.length
-            print " = "
-            puts @results.length
-            
-            EM.stop
-                        
-          }
-          trap("INT") { EM.stop; break }
-        }
+        puts @parser.results
+        
+        pbar.inc
       end
+      pbar.finish
       
       display
       #email

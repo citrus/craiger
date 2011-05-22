@@ -9,10 +9,10 @@ OptionParser.new do |opts|
   
   opts.banner = "Usage: craiger [options]"
 
-  opts.on("--discover", "Discover cities") do |b|
-    options[:discover] = b
+  opts.on("-D", "--discover [OPTION]", "Specify a discovery type") do |option|
+    options[:discover] = (option || "cities").to_s.downcase
   end
-  
+
   opts.on("-v", "--[no-]verbose", "Run verbosely") do |b|
     options[:verbose] = b
   end
@@ -20,8 +20,4 @@ OptionParser.new do |opts|
 end.parse!
 
 
-if options[:discover]
-  Craiger::Locations.discover!
-else
-  Craiger::Search.new(ARGV.join(" ")).run!
-end
+Craiger.search(ARGV.join(" "), options)
