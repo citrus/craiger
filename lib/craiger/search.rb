@@ -22,7 +22,7 @@ module Craiger
     def run!
       puts "Searching for #{@query}!"
       @results = []
-      @cities = Locations.all.shuffle.take(20)
+      @cities = Locations.local #all.shuffle.take(20)
       
       
       pbar = ProgressBar.new("Searching...", @cities.length)
